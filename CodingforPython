@@ -1,0 +1,90 @@
+import tkinter as tk
+from tkinter import messagebox, ttk
+from PIL import Image, ImageTk
+import webbrowser
+
+# --- Valid credentials ---
+valid_username = "sakibs"
+valid_password = "1993"
+
+# --- Websites dictionary ---
+websites = {
+    "Google": "https://www.google.com",
+    "YouTube": "https://www.youtube.com",
+    "GitHub": "https://www.github.com",
+    "Reddit": "https://www.reddit.com",
+    "Facebook": "https://facebook.com",
+    "Linkedin": "https://www.linkedin.com"
+}
+
+# --- Launch selected website ---
+def open_website():
+    selected_site = combo.get()
+    url = websites.get(selected_site)
+    if url:
+        webbrowser.open(url)
+
+# --- Open main app after login ---
+def open_main_app():
+    login_window.destroy()
+    main_app = tk.Tk()
+    main_app.title("Website Launcher")
+    main_app.geometry("450x300")
+
+    label = tk.Label(main_app, text="Choose a website to open:", font=("Arial", 12))
+    label.pack(pady=10)
+
+    global combo
+    combo = ttk.Combobox(main_app, values=list(websites.keys()), font=("Arial", 10))
+    combo.pack(pady=5)
+    combo.current(0)
+
+    open_btn = tk.Button(main_app, text="Open Website", command=open_website,
+                         font=("Arial", 10), bg="lightblue")
+    open_btn.pack(pady=10)
+
+    main_app.mainloop()
+
+# --- Validate login ---
+def validate_login():
+    username = username_var.get()
+    password = password_var.get()
+
+    if username == valid_username and password == valid_password:
+        messagebox.showinfo("Login", "Login successful!")
+        open_main_app()
+    else:
+        messagebox.showerror("Login", "Invalid username or password")
+
+# --- Login window setup ---
+login_window = tk.Tk()
+login_window.title("Welcome. Please log in to move forward towards this website")
+login_window.geometry("600x600")
+
+# --- Add background image ---
+try:
+    bg_image1 = Image.open(r'C:\python image test\PythonGUIWebsite\LA.jpg')
+    bg_photo1 = ImageTk.PhotoImage(bg_image1)
+    bg_label1 = tk.Label(login_window, image=bg_photo1)
+    bg_label1.place(x=0, y=0, relwidth=1, relheight=1)
+    bg_label1.image = bg_photo1  # Keep reference to avoid garbage collection
+except Exception as e:
+    print("Background image not found:", e)
+
+# --- Login form fields ---
+username_var = tk.StringVar()
+password_var = tk.StringVar()
+
+form_frame = tk.Frame(login_window, bg="white")
+form_frame.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
+
+tk.Label(form_frame, text="Username:", bg="white").pack(pady=5)
+tk.Entry(form_frame, textvariable=username_var).pack(pady=5)
+
+tk.Label(form_frame, text="Password:", bg="white").pack(pady=5)
+tk.Entry(form_frame, textvariable=password_var, show="*").pack(pady=5)
+
+tk.Button(form_frame, text="Login", command=validate_login).pack(pady=15)
+
+# --- Start GUI loop ---
+login_window.mainloop()
